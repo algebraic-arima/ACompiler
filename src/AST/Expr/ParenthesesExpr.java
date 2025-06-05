@@ -17,6 +17,7 @@ public class ParenthesesExpr extends Expr {
 
     @Override
     public void setHash() {
+        if (hash != null) return;
         hasher.update("ParenthesesExpr", type, expr);
         hash = hasher.hexdigest();
     }

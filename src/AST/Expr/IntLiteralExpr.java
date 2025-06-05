@@ -31,6 +31,7 @@ public class IntLiteralExpr extends Expr {
 
     @Override
     public void setHash() {
+        if (hash != null) return;
         hasher.update("IntLiteralExpr", type, value);
         hash = hasher.hexdigest();
     }

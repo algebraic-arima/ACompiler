@@ -25,6 +25,7 @@ public class FuncCallExpr extends Expr {
 
     @Override
     public void setHash() {
+        if (hash != null) return;
         hasher.update("FuncCallExpr", type, funcName, args);
         hash = hasher.hexdigest();
     }

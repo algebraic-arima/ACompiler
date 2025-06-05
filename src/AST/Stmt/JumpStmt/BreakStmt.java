@@ -15,6 +15,7 @@ public class BreakStmt extends Stmt{
 
     @Override
     public void setHash() {
+        if (hash != null) return;
         hasher.update("BreakStmt");
         hash = hasher.hexdigest();
     }

@@ -23,6 +23,7 @@ public class FuncDef extends Def {
 
     @Override
     public void setHash(){
+        if (hash != null) return;
         hasher.update("FuncDef", retType);
         for(Map.Entry<String, Type> e:funcParams.entrySet()){
             hasher.update(e.getValue());

@@ -15,6 +15,7 @@ public class ContinueStmt extends Stmt {
 
     @Override
     public void setHash() {
+        if (hash != null) return;
         hasher.update("ContinueStmt");
         hash = hasher.hexdigest();
     }

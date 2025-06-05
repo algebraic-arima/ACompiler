@@ -18,6 +18,7 @@ public class ForStmt extends Stmt {
 
     @Override
     public void setHash() {
+        if (hash != null) return;
         hasher.update("ForStmt", cond, update, init, body);
         hash = hasher.hexdigest();
     }

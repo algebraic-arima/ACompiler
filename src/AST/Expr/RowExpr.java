@@ -16,6 +16,7 @@ public class RowExpr extends Expr {
 
     @Override
     public void setHash() {
+        if (hash != null) return;
         hasher.update("RowExpr", type);
         exps.forEach(e -> hasher.update(e));
         hash = hasher.hexdigest();

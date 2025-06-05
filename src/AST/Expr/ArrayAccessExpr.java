@@ -19,6 +19,7 @@ public class ArrayAccessExpr extends Expr {
 
     @Override
     public void setHash() {
+        if (hash != null) return;
         hasher.update("ArrayAccessExpr", type, array, index);
         hash = hasher.hexdigest();
     }

@@ -28,6 +28,7 @@ public class MemberObjAccessExpr extends Expr{
 
     @Override
     public void setHash() {
+        if (hash != null) return;
         hasher.update("MemberObjAccessExpr", type, obj, member);
         hash = hasher.hexdigest();
     }

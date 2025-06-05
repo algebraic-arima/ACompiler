@@ -24,6 +24,7 @@ public class VarDef extends Def{
 
     @Override
     public void setHash() {
+        if (hash != null) return;
         hasher.update("VarDef");
         for (Map.Entry<String, Expr> entry : initVals.entrySet()) {
             hasher.update(entry.getKey(), entry.getValue());

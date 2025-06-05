@@ -16,6 +16,7 @@ public class ExprStmt extends Stmt {
 
     @Override
     public void setHash() {
+        if (hash != null) return;
         hasher.update("ExprStmt", expr);
         hash = hasher.hexdigest();
     }

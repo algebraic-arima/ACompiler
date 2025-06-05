@@ -9,10 +9,11 @@ import src.utils.pos.Position;
 public abstract class Stmt extends BaseASTNode {
 
     public String hash;
-    public BlakeHasher hasher = new BlakeHasher();
+    public BlakeHasher hasher;
 
     public Stmt(Position p){
         super(p);
+        hasher = new BlakeHasher();
     }
 
     abstract public void setHash();

@@ -16,6 +16,7 @@ public class VarDefStmt extends Stmt {
 
     @Override
     public void setHash() {
+        if (hash != null) return;
         hasher.update(varDef);
         hash = hasher.hexdigest();
     }

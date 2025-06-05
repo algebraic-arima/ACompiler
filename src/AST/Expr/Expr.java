@@ -14,14 +14,11 @@ public abstract class Expr extends BaseASTNode {
     public Entity entity;
     public boolean isLvalue = false;
     public String hash;
-    public BlakeHasher hasher = new BlakeHasher();
-
-    public Expr() {
-        super();
-    }
+    public BlakeHasher hasher;
 
     public Expr(Position p) {
         super(p);
+        hasher = new BlakeHasher();
     }
 
     abstract public void setHash();

@@ -36,6 +36,7 @@ public class UnaryArithExpr extends Expr {
 
     @Override
     public void setHash() {
+        if (hash != null) return;
         hasher.update("UnaryArithExpr", type, op.toString(), expr);
         hash = hasher.hexdigest();
     }

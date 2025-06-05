@@ -16,6 +16,7 @@ public class AssignExpr extends Expr {
 
     @Override
     public void setHash() {
+        if (hash != null) return;
         hasher.update("AssignExpr", type, var, value);
         hash = hasher.hexdigest();
     }

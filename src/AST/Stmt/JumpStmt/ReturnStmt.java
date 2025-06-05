@@ -18,6 +18,7 @@ public class ReturnStmt extends Stmt {
 
     @Override
     public void setHash() {
+        if (hash != null) return;
         hasher.update("ReturnStmt", retExpr);
         hash = hasher.hexdigest();
     }

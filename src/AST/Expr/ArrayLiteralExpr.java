@@ -16,6 +16,7 @@ public class ArrayLiteralExpr extends Expr {
 
     @Override
     public void setHash() {
+        if (hash != null) return;
         hasher.update("ArrayLiteralExpr", type);
         elements.forEach(d -> hasher.update(d));
         hash = hasher.hexdigest();

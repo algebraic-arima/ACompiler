@@ -30,6 +30,7 @@ import java.util.ArrayList;
 import java.util.stream.Stream;
 
 import io.github.rctcwyvrn.blake3.Blake3;
+import src.utils.type.Type;
 
 public class Main {
 
@@ -56,23 +57,6 @@ public class Main {
 
     public static void main(String[] args) throws Exception {
 
-//        {
-//            Blake3 hasher = Blake3.newInstance();
-//            hasher.update("divf".getBytes());
-//            hasher.update("shg".getBytes());
-//            hasher.update("dfdg".getBytes());
-//            String hexhash = hasher.hexdigest();
-//            System.out.println(hexhash);
-//        }
-//        {
-//            Blake3 hasher = Blake3.newInstance();
-//            hasher.update("div".getBytes());
-//            hasher.update("shg".getBytes());
-//            hasher.update("dfdg".getBytes());
-//            String hexhash = hasher.hexdigest();
-//            System.out.println(hexhash);
-//        }
-
         String src = "/home/limike/Git/compiler-2025/testcases/multi/t3/";
         getFiles(src);
 
@@ -93,8 +77,6 @@ public class Main {
                 SemanticChecker sc = new SemanticChecker(gScope);
                 sc.visit(ASTRoot);
                 ASTRoot.setHash();
-
-
 
                 IRBuilder irBuilder = new IRBuilder(gScope);
                 IRProg irProg = irBuilder.build(ASTRoot);

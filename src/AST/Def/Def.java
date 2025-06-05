@@ -7,10 +7,11 @@ import src.utils.pos.Position;
 
 public abstract class Def extends BaseASTNode {
     public String hash;
-    public BlakeHasher hasher = new BlakeHasher();
+    public BlakeHasher hasher;
 
     public Def(Position p) {
         super(p);
+        hasher = new BlakeHasher();
     }
 
     abstract public void setHash();

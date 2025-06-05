@@ -23,6 +23,7 @@ public class NewArrayInitExpr extends Expr{
 
     @Override
     public void setHash() {
+        if (hash != null) return;
         hasher.update("NewArrayInitExpr", type, init);
         hash = hasher.hexdigest();
     }

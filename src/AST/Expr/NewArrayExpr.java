@@ -27,6 +27,7 @@ public class NewArrayExpr extends Expr {
 
     @Override
     public void setHash() {
+        if (hash != null) return;
         hasher.update("NewArrayExpr", type, Integer.toString(dim));
         for (Expr expr : len) {
             hasher.update(expr);

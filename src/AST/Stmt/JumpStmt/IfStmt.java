@@ -19,6 +19,7 @@ public class IfStmt extends Stmt {
 
     @Override
     public void setHash() {
+        if (hash != null) return;
         hasher.update("IfStmt", condition, trueStmt, falseStmt);
         hash = hasher.hexdigest();
     }

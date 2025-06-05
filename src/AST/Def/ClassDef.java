@@ -20,8 +20,14 @@ public class ClassDef extends Def {
 
     @Override
     public void setHash() {
+        if (hash != null) return;
         hasher.update("ClassDef", constructor);
-        classFunc.forEach(FuncDef::setHash);
+        ArrayList<Object> tmp = new ArrayList<>();
+        classFunc.forEach(d->{
+            d.setHash();
+            tmp.add(d.hash);
+        });
+        hasher.unorderedMix(tmp);
         hash = hasher.hexdigest();
     }
 

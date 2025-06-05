@@ -27,6 +27,7 @@ public class MemberFuncCallExpr extends Expr {
 
     @Override
     public void setHash() {
+        if (hash != null) return;
         hasher.update("MemberFuncCallExpr", type, obj, funcName, args);
         hash = hasher.hexdigest();
     }

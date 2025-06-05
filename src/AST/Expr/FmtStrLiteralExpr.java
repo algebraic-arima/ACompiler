@@ -20,6 +20,7 @@ public class FmtStrLiteralExpr extends Expr {
 
     @Override
     public void setHash() {
+        if (hash != null) return;
         hasher.update("FmtStrLiteralExpr", type);
         for (String str : strs) {
             hasher.update(str);

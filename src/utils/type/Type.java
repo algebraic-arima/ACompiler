@@ -100,8 +100,9 @@ public class Type {
         return atomType == T.VOID;
     }
 
-    public void setHash(){
-        hasher.update(atomType.toString(), typeName, dim.toString());
+    public void setHash() {
+        if (hash != null) return;
+        hasher.update("Type", atomType.toString(), typeName, dim.toString());
         hash = hasher.hexdigest();
     }
 

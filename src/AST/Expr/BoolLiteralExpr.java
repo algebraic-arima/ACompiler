@@ -17,12 +17,9 @@ public class BoolLiteralExpr extends Expr {
         value = v;
     }
 
-    public BoolLiteralExpr(TerminalNode node) {
-        value = Objects.equals(node.getText(), "true");
-    }
-
     @Override
     public void setHash() {
+        if (hash != null) return;
         hasher.update("BoolLiteralExpr", type, value ? "true" : "false");
         hash = hasher.hexdigest();
     }

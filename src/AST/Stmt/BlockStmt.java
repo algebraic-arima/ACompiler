@@ -27,6 +27,7 @@ public class BlockStmt extends Stmt {
 
     @Override
     public void setHash() {
+        if (hash != null) return;
         hasher.update("BlockStmt");
         for (Stmt stmt : stmts) {
             hasher.update(stmt);

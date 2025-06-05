@@ -17,6 +17,7 @@ public class TernaryBranchExpr extends Expr {
 
     @Override
     public void setHash() {
+        if (hash != null) return;
         hasher.update("TernaryBranchExpr", type, cond, trueBranch, falseBranch);
         hash = hasher.hexdigest();
     }

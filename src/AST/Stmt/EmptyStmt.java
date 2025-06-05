@@ -12,6 +12,7 @@ public class EmptyStmt extends Stmt {
 
     @Override
     public void setHash() {
+        if (hash != null) return;
         hasher.update("EmptyStmt");
         hash = hasher.hexdigest();
     }

@@ -17,6 +17,7 @@ public class WhileStmt extends Stmt {
 
     @Override
     public void setHash() {
+        if (hash != null) return;
         hasher.update("WhileStmt", cond, body);
         hash = hasher.hexdigest();
     }

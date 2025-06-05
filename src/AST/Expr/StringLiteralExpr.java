@@ -15,12 +15,9 @@ public class StringLiteralExpr extends Expr {
         value = v;
     }
 
-    public StringLiteralExpr(TerminalNode node) {
-        value = node.getText();
-    }
-
     @Override
     public void setHash() {
+        if (hash != null) return;
         hasher.update("StringLiteralExpr", type, value);
         hash = hasher.hexdigest();
     }

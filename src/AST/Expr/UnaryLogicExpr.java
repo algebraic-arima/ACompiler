@@ -21,6 +21,7 @@ public class UnaryLogicExpr extends Expr{
 
     @Override
     public void setHash() {
+        if (hash != null) return;
         hasher.update("UnaryLogicExpr", op.toString(), expr);
         hash = hasher.hexdigest();
     }

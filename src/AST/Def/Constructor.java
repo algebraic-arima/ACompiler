@@ -18,6 +18,7 @@ public class Constructor extends Def{
 
     @Override
     public void setHash(){
+        if (hash != null) return;
         hasher.update("Constructor", funcBody);
         hash = hasher.hexdigest();
     }

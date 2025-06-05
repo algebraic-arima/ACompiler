@@ -13,6 +13,7 @@ public class NullExpr extends Expr{
 
     @Override
     public void setHash() {
+        if (hash != null) return;
         hasher.update("NullExpr", type);
         hash = hasher.hexdigest();
     }

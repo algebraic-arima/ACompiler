@@ -14,6 +14,7 @@ public class ThisPtrExpr extends Expr {
 
     @Override
     public void setHash() {
+        if (hash != null) return;
         hasher.update("ThisPtrExpr");
         hash = hasher.hexdigest();
     }

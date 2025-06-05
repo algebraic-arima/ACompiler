@@ -29,6 +29,7 @@ public class BinaryLogicExpr extends Expr {
 
     @Override
     public void setHash() {
+        if (hash != null) return;
         hasher.update("BinaryLogicExpr", type, lhs, op.toString(), rhs);
         hash = hasher.hexdigest();
     }

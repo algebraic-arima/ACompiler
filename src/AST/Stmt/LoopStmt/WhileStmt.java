@@ -1,8 +1,9 @@
 package src.AST.Stmt.LoopStmt;
 
 import src.AST.ASTVisitor;
-import src.AST.__ASTVisitor;
 import src.AST.Expr.Expr;
+import src.AST.__ASTVisitor;
+
 import src.AST.Stmt.Stmt;
 import src.utils.pos.Position;
 import src.AST.BlakeHasher;

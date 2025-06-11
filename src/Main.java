@@ -58,6 +58,7 @@ public class Main {
     public static void main(String[] args) throws Exception {
 
         String src = "/home/limike/Git/compiler-2025/testcases/multi/t3/";
+        String cache = "/home/limike/.mcache/";
         getFiles(src);
 
         for (File fileIn : srcFiles) {
@@ -72,27 +73,15 @@ public class Main {
                 Mx.ProgContext parseTreeRoot = parser.prog();
                 ASTBuilder AST = new ASTBuilder();
                 Prog ASTRoot = (Prog) AST.visit(parseTreeRoot);
+                ASTRoot.setHash();
                 GlobalScope gScope = new GlobalScope();
                 new SymbolCollector(gScope).visit(ASTRoot);
                 SemanticChecker sc = new SemanticChecker(gScope);
                 sc.visit(ASTRoot);
-                ASTRoot.setHash();
 
                 IRBuilder irBuilder = new IRBuilder(gScope);
                 IRProg irProg = irBuilder.build(ASTRoot);
                 irProg.reformat();
-//                if (printIR) {
-//                    IRPrinter irPrinter = new IRPrinter(irProg);
-//                    if (fileOutIR) {
-//                        FileOutputStream fileOutputStream = new FileOutputStream("/home/limike/Git/compiler-2024/ir.ll");
-//                        PrintStream printStream = new PrintStream(fileOutputStream);
-//                        System.setOut(printStream);
-//                    } else {
-//                        PrintStream consolePrintStream = new PrintStream(new FileOutputStream(FileDescriptor.out));
-//                        System.setOut(consolePrintStream);
-//                    }
-//                    irPrinter.print();
-//                }
 
                 IRPrinter irPrinter = new IRPrinter(irBuilder.irProg);
                 String fileOutIR = fileIn.getAbsolutePath().replaceAll(".mx", ".ll");
@@ -101,21 +90,21 @@ public class Main {
                 System.setOut(printStreamIR);
                 irPrinter.print();
 
-                Mem2Reg m2r = new Mem2Reg(irProg);
-                DCE dce = new DCE(irProg);
-                RegAlloc ra = new RegAlloc(irProg);
-                ASMBuilder asmBuilder = new ASMBuilder(irBuilder.irProg, false);
-                ASMProg asmProg = asmBuilder.asmProg;
-                Jopt j = new Jopt(asmProg);
-
-                ASMList.add(asmProg);
-
-                ASMPrinter asmPrinter = new ASMPrinter(asmBuilder.asmProg);
-                String fileOutASM = fileIn.getAbsolutePath().replaceAll(".mx", ".s");
-                FileOutputStream fileOutputStreamASM = new FileOutputStream(fileOutASM);
-                PrintStream printStreamASM = new PrintStream(fileOutputStreamASM);
-                System.setOut(printStreamASM);
-                asmPrinter.print();
+//                Mem2Reg m2r = new Mem2Reg(irProg);
+//                DCE dce = new DCE(irProg);
+//                RegAlloc ra = new RegAlloc(irProg);
+//                ASMBuilder asmBuilder = new ASMBuilder(irBuilder.irProg, false);
+//                ASMProg asmProg = asmBuilder.asmProg;
+//                Jopt j = new Jopt(asmProg);
+//
+//                ASMList.add(asmProg);
+//
+//                ASMPrinter asmPrinter = new ASMPrinter(asmBuilder.asmProg);
+//                String fileOutASM = fileIn.getAbsolutePath().replaceAll(".mx", ".s");
+//                FileOutputStream fileOutputStreamASM = new FileOutputStream(fileOutASM);
+//                PrintStream printStreamASM = new PrintStream(fileOutputStreamASM);
+//                System.setOut(printStreamASM);
+//                asmPrinter.print();
             } catch (error e) {
                 System.err.println("In " + fileIn + ": (" + e.pos.row + ":" + e.pos.column + ") " + e.message);
                 System.exit(1); // if judge

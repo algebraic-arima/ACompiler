@@ -5,13 +5,12 @@ import src.AST.Def.Def;
 import src.utils.pos.Position;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 
 public class Prog extends BaseASTNode {
 
     public ArrayList<Def> defs;
     public ArrayList<Dec> decs;
-    public ArrayList<String> hashs = new ArrayList<>();
+    public ArrayList<String> funcHash = new ArrayList<>();
 
     public Prog(Position p) {
         super(p);
@@ -22,7 +21,7 @@ public class Prog extends BaseASTNode {
     public void setHash(){
         defs.forEach(d -> {
             d.setHash();
-            hashs.add(d.hash);
+            funcHash.add(d.hash);
         });
         printHash();
     }

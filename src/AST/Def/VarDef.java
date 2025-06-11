@@ -2,8 +2,9 @@ package src.AST.Def;
 
 import src.AST.ASTVisitor;
 import src.AST.BlakeHasher;
-import src.AST.__ASTVisitor;
 import src.AST.Expr.Expr;
+import src.AST.__ASTVisitor;
+
 import src.utils.pos.Position;
 import src.utils.type.Type;
 

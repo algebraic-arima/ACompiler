@@ -2,6 +2,8 @@ package src.AST;
 
 import src.utils.pos.Position;
 
+import java.io.DataOutputStream;
+
 public abstract class BaseASTNode {
     public Position pos;
 
@@ -12,6 +14,8 @@ public abstract class BaseASTNode {
     public BaseASTNode(Position p) {
         pos = p;
     }
+
+//    abstract public void writeData(DataOutputStream dos);
 
     abstract public void accept(__ASTVisitor v);
 

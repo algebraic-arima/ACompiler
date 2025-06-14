@@ -10,7 +10,10 @@ public class Prog extends BaseASTNode {
 
     public ArrayList<Def> defs;
     public ArrayList<Dec> decs;
-    public ArrayList<String> funcHash = new ArrayList<>();
+    public ArrayList<String> defHash = new ArrayList<>();
+
+    public String hash;
+    public BlakeHasher hasher = new BlakeHasher();
 
     public Prog(Position p) {
         super(p);
@@ -19,10 +22,11 @@ public class Prog extends BaseASTNode {
     }
 
     public void setHash(){
-        defs.forEach(d -> {
-            d.setHash();
-            funcHash.add(d.hash);
-        });
+        if (hash != null) return;
+        ArrayList<Object> tmp = new ArrayList<>(defs);
+        hasher.unorderedMix(tmp);
+        defs.forEach(d -> defHash.add(d.hash));
+        hash = hasher.hexdigest();
         printHash();
     }
 

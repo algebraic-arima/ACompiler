@@ -25,7 +25,7 @@ public class ClassDef extends Def {
         ArrayList<Object> tmp = new ArrayList<>();
         classFunc.forEach(d->{
             d.setHash();
-            tmp.add(d.hash);
+            tmp.add(d);
         });
         hasher.unorderedMix(tmp);
         hash = hasher.hexdigest();

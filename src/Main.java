@@ -15,6 +15,7 @@ import src.Optim.Jopt.Jopt;
 import src.Optim.Mem2Reg.Mem2Reg;
 import src.Optim.RegAlloc.RegAlloc;
 import src.Semantic.*;
+import src.cacheBlock.cacheManager;
 import src.parser.Lex;
 import src.parser.Mx;
 import src.utils.MxErrorListener;
@@ -78,6 +79,11 @@ public class Main {
                 new SymbolCollector(gScope).visit(ASTRoot);
                 SemanticChecker sc = new SemanticChecker(gScope);
                 sc.visit(ASTRoot);
+
+                String astcache = cache + ".ast";
+                FileOutputStream c = new FileOutputStream(astcache);
+                DataOutputStream dos = new DataOutputStream(c);
+                cacheManager cm = new cacheManager(ASTRoot, dos);
 
                 IRBuilder irBuilder = new IRBuilder(gScope);
                 IRProg irProg = irBuilder.build(ASTRoot);

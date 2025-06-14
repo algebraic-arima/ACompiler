@@ -64,7 +64,7 @@ public class BlakeHasher {
     }
 
     public void unorderedMix(ArrayList<Object> args) {
-        byte[] ans = new byte[32];
+        byte[] ans = new byte[64];
         for (Object arg : args) {
             byte[] incre;
             switch (arg) {
@@ -106,7 +106,7 @@ public class BlakeHasher {
                 }
                 default -> throw new IllegalArgumentException("Unsupported type: " + arg.getClass());
             }
-            for (int i = 0; i < 32; ++i){
+            for (int i = 0; i < 64; ++i){
                 ans[i] = (byte) (ans[i] ^ incre[i]);
             }
         }

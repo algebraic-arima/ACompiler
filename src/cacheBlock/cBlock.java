@@ -14,8 +14,8 @@ public class cBlock {
 
     public cBlock() {}
 
-    public cBlock(BaseASTNode node, String dataHash, int p) {
-        setTypeHash(node.getClass().hashCode());
+    public cBlock(int classHash, String dataHash, int p) {
+        setTypeHash(classHash);
         setDataHash(dataHash);
         setPar(p);
     }

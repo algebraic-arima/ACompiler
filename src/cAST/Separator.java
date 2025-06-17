@@ -1,8 +1,6 @@
-package src.cAST.Stmt;
+package src.cAST;
 
-import src.cAST.BaseCASTNode;
-
-public class EmptyStmt extends Stmt {
+public class Separator extends  BaseCASTNode{
     @Override
     void addChild(BaseCASTNode c) {
         throw new RuntimeException("AST type not match!");

@@ -16,6 +16,7 @@ import src.Optim.Mem2Reg.Mem2Reg;
 import src.Optim.RegAlloc.RegAlloc;
 import src.Semantic.*;
 import src.cacheBlock.cacheManager;
+import src.cacheBlock.cacheReader;
 import src.parser.Lex;
 import src.parser.Mx;
 import src.utils.MxErrorListener;
@@ -83,7 +84,10 @@ public class Main {
                 String astcache = cache + ".ast";
                 FileOutputStream c = new FileOutputStream(astcache);
                 DataOutputStream dos = new DataOutputStream(c);
+                FileInputStream i = new FileInputStream(astcache);
+                DataInputStream dis = new DataInputStream(i);
                 cacheManager cm = new cacheManager(ASTRoot, dos);
+                cacheReader cr = new cacheReader(dis);
 
                 IRBuilder irBuilder = new IRBuilder(gScope);
                 IRProg irProg = irBuilder.build(ASTRoot);

@@ -4,4 +4,5 @@ import src.cAST.BaseCASTNode;
 
 public abstract class Stmt extends BaseCASTNode {
     String hash;
+    abstract void addChild(BaseCASTNode c);
 }

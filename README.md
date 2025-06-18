@@ -1,5 +1,14 @@
 # Incremental Compilation: An Advanced Fake Mx* Compiler
 
+## Goal
+
+- [ ] Function-Level detect and recompile
+- [ ] Expression-Level replacement
+- [ ] Symbol renaming detect
+- - [ ] variable rename
+- - [ ] class rename
+- [ ] Remote
+
 ## Usage
 
 Place `utils.bash` under the same directory before running the bash.

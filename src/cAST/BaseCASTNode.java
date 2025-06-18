@@ -1,5 +1,6 @@
 package src.cAST;
 
 abstract public class BaseCASTNode {
-    abstract void addChild(BaseCASTNode c);
+    public String hash;
+    public abstract void addChild(BaseCASTNode c);
 }

@@ -2,22 +2,22 @@ package src.cacheBlock;
 
 import src.cAST.BaseCASTNode;
 import src.cAST.CProg;
-import src.cAST.Def.ClassDef;
-import src.cAST.Def.Constructor;
-import src.cAST.Def.FuncDef;
-import src.cAST.Def.VarDef;
+import src.cAST.Def.ClassCDef;
+import src.cAST.Def.CConstructor;
+import src.cAST.Def.FuncCDef;
+import src.cAST.Def.VarCDef;
 import src.cAST.Expr.*;
-import src.cAST.Stmt.BlockStmt;
-import src.cAST.Stmt.EmptyStmt;
-import src.cAST.Stmt.ExprStmt;
-import src.cAST.Stmt.JumpStmt.BreakStmt;
-import src.cAST.Stmt.JumpStmt.ContinueStmt;
-import src.cAST.Stmt.JumpStmt.IfStmt;
-import src.cAST.Stmt.JumpStmt.ReturnStmt;
-import src.cAST.Stmt.LoopStmt.ForStmt;
-import src.cAST.Stmt.LoopStmt.WhileStmt;
-import src.cAST.Stmt.VarDefStmt;
-import src.utils.ByteUtils;
+import src.cAST.Separator;
+import src.cAST.Stmt.BlockCStmt;
+import src.cAST.Stmt.EmptyCStmt;
+import src.cAST.Stmt.ExprCStmt;
+import src.cAST.Stmt.JumpStmt.BreakCStmt;
+import src.cAST.Stmt.JumpStmt.ContinueCStmt;
+import src.cAST.Stmt.JumpStmt.IfCStmt;
+import src.cAST.Stmt.JumpStmt.ReturnCStmt;
+import src.cAST.Stmt.LoopStmt.ForCStmt;
+import src.cAST.Stmt.LoopStmt.WhileCStmt;
+import src.cAST.Stmt.VarDefCStmt;
 
 import java.io.DataInputStream;
 import java.io.EOFException;
@@ -28,56 +28,60 @@ public class cacheReader {
     public ArrayList<cBlock> list = new ArrayList<>();
     ArrayList<BaseCASTNode> cNodes = new ArrayList<>();
     public int curPos = -1;
+    CProg cProg;
 
     static ArrayList<Class<?>> classList = new ArrayList<>();
 
     static {
-        classList.add(CProg.class);
+        classList.add(CProg.class); // 0
 
-        classList.add(ClassDef.class);
-        classList.add(Constructor.class);
-        classList.add(FuncDef.class);
-        classList.add(VarDef.class);
+        classList.add(ClassCDef.class);
+        classList.add(CConstructor.class);
+        classList.add(FuncCDef.class);
+        classList.add(VarCDef.class); // 4
 
-        classList.add(BlockStmt.class);
-        classList.add(EmptyStmt.class);
-        classList.add(ExprStmt.class);
-        classList.add(BreakStmt.class);
-        classList.add(ContinueStmt.class);
-        classList.add(IfStmt.class);
-        classList.add(ReturnStmt.class);
-        classList.add(ForStmt.class);
-        classList.add(WhileStmt.class);
-        classList.add(VarDefStmt.class);
+        classList.add(BlockCStmt.class);
+        classList.add(EmptyCStmt.class);
+        classList.add(ExprCStmt.class);
+        classList.add(BreakCStmt.class);
+        classList.add(ContinueCStmt.class);
+        classList.add(IfCStmt.class);
+        classList.add(ReturnCStmt.class);
+        classList.add(ForCStmt.class);
+        classList.add(WhileCStmt.class);
+        classList.add(VarDefCStmt.class); // 14
 
-        classList.add(ArrayAccessExpr.class);
-        classList.add(ArrayLiteralExpr.class);
-        classList.add(AssignExpr.class);
-        classList.add(BinaryArithExpr.class);
-        classList.add(BinaryLogicExpr.class);
-        classList.add(BoolLiteralExpr.class);
-        classList.add(FmtStrLiteralExpr.class);
-        classList.add(FuncCallExpr.class);
-        classList.add(IntLiteralExpr.class);
-        classList.add(MemberFuncCallExpr.class);
-        classList.add(MemberObjAccessExpr.class);
-        classList.add(NewArrayExpr.class);
-        classList.add(NewArrayInitExpr.class);
-        classList.add(NewTypeExpr.class);
-        classList.add(NullExpr.class);
-        classList.add(ParenthesesExpr.class);
-        classList.add(RowExpr.class);
-        classList.add(StringLiteralExpr.class);
-        classList.add(TernaryBranchExpr.class);
-        classList.add(ThisPtrExpr.class);
-        classList.add(UnaryArithExpr.class);
-        classList.add(UnaryLogicExpr.class);
-        classList.add(VarExpr.class);
+        classList.add(ArrayAccessCExpr.class);
+        classList.add(ArrayLiteralCExpr.class);
+        classList.add(AssignCExpr.class);
+        classList.add(BinaryArithCExpr.class);
+        classList.add(BinaryLogicCExpr.class);
+        classList.add(BoolLiteralCExpr.class);
+        classList.add(FmtStrLiteralCExpr.class); // 21
+        classList.add(FuncCallCExpr.class);
+        classList.add(IntLiteralCExpr.class);
+        classList.add(MemberFuncCallCExpr.class);
+        classList.add(MemberObjAccessCExpr.class);
+        classList.add(NewArrayCExpr.class);
+        classList.add(NewArrayInitCExpr.class);
+        classList.add(NewTypeCExpr.class);
+        classList.add(NullCExpr.class);
+        classList.add(ParenthesesCExpr.class); // 30
+        classList.add(RowCExpr.class);
+        classList.add(StringLiteralCExpr.class);
+        classList.add(TernaryBranchCExpr.class);
+        classList.add(ThisPtrCExpr.class);
+        classList.add(UnaryArithCExpr.class);
+        classList.add(UnaryLogicCExpr.class);
+        classList.add(VarCExpr.class); // 37
+
+        classList.add(Separator.class); // 38
     }
 
     public cacheReader(DataInputStream dis) throws IOException {
         list = readAllBlocks(dis);
-        toAST();
+        CAST();
+        cProg = cNodes.getFirst() instanceof CProg ? (CProg) cNodes.getFirst() : null;
     }
 
     public ArrayList<cBlock> readAllBlocks(DataInputStream dis) throws IOException {
@@ -92,14 +96,21 @@ public class cacheReader {
         return blocks;
     }
 
-    public void toAST(){
+    public void CAST(){
         for(cBlock ccb: list){
-            int ind = ByteUtils.byteArrayToInt(ccb.typeHash);
+            int ind = ccb.getTypeHash();
             Class<?> clazz = classList.get(ind);
             if (clazz != null) {
                 try {
                     BaseCASTNode cast = (BaseCASTNode) clazz.getDeclaredConstructor().newInstance();
+                    cast.hash = ccb.getDataHash();
                     cNodes.add(cast);
+                    int par = ccb.getPar();
+                    if (par >= 0 && par < cNodes.size()) {
+                        cNodes.get(par).addChild(cast);
+                    } else if (par != -1) {
+                        throw new RuntimeException("Parent index out of bounds: " + par);
+                    }
                 } catch (Exception e) {
                     throw new RuntimeException("Failed to create instance for type: " + clazz.getName(), e);
                 }

@@ -1,18 +1,23 @@
 package src.cAST;
 
-import src.cAST.Def.Def;
+import src.cAST.Def.CDef;
+import src.cAST.Def.FuncCDef;
 
-import java.util.ArrayList;
+import java.util.HashMap;
 
 public class CProg extends BaseCASTNode {
-    public ArrayList<Def> defs;
-    public ArrayList<String> funcHash = new ArrayList<>();
+    public HashMap<String, CDef> defs = new HashMap<>();
 
     @Override
-    void addChild(BaseCASTNode c) {
-        if(c instanceof Def def){
-            defs.add(def);
+    public void addChild(BaseCASTNode c) {
+        if(c instanceof CDef cdef){
+            defs.put(cdef.hash, cdef);
         }
         throw new RuntimeException("AST type not match!");
     }
+
+    public CDef findCache(String hash){
+        return defs.getOrDefault(hash, null);
+    }
+
 }

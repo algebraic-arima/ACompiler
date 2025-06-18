@@ -21,6 +21,7 @@ import src.AST.Stmt.JumpStmt.ReturnStmt;
 import src.AST.Stmt.LoopStmt.ForStmt;
 import src.AST.Stmt.LoopStmt.WhileStmt;
 import src.AST.Stmt.VarDefStmt;
+import src.cAST.Separator;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -59,6 +60,10 @@ public class cacheManager implements __ASTVisitor {
         cBlock c = new cBlock(1, node.hash, tmp);
         curPos = list.size();
         list.add(c);
+        node.classMem.forEach(d -> d.accept(this));
+        Separator sep = new Separator();
+        cBlock s = new cBlock(38, sep.hash, curPos);
+        list.add(s);
         node.classFunc.forEach(d -> d.accept(this));
         curPos = tmp;
     }

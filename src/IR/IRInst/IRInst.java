@@ -13,6 +13,12 @@ public abstract class IRInst extends IRNode {
     public HashSet<Register> liveOut = new HashSet<>();
     public int omega;
     public boolean DCER = false;
+    public int cacheASTInd = -1;
+
+
+    public void setCache(int ind) {
+        cacheASTInd = ind;
+    }
 
     public void addOut(String c) {
         liveOut.add(Register.registers.get(c));

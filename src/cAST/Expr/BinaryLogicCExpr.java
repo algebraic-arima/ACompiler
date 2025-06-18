@@ -1,5 +1,9 @@
 package src.cAST.Expr;
+import src.AST.Expr.BinaryLogicExpr;
+import src.AST.Expr.Expr;
 import src.cAST.BaseCASTNode;
+
+import java.util.HashMap;
 
 public class BinaryLogicCExpr extends CExpr {
 
@@ -9,19 +13,6 @@ public class BinaryLogicCExpr extends CExpr {
 
     public CExpr lhs, rhs;
     public BLogicOp op;
-
-    public BinaryLogicCExpr(CExpr lhs, CExpr rhs, String op) {
-        this.lhs = lhs;
-        this.rhs = rhs;
-        switch (op) {
-            case "&&":
-                this.op = BLogicOp.AND;
-                break;
-            case "||":
-                this.op = BLogicOp.OR;
-                break;
-        }
-    }
 
     @Override
     public void addChild(BaseCASTNode c) {
@@ -36,5 +27,24 @@ public class BinaryLogicCExpr extends CExpr {
         } else {
             throw new RuntimeException("BinaryLogicExpr can only have Expr children");
         }
+    }
+
+    @Override
+    public HashMap<CExpr, Expr> diff(Expr e) {
+        if (e.hash.equals(hash)) {
+            return new HashMap<>();
+        }
+        HashMap<CExpr, Expr> diffMap = new HashMap<>();
+        if (e instanceof BinaryLogicExpr binaryLogicExpr) {
+            diffMap.putAll(lhs.diff(binaryLogicExpr.lhs));
+            diffMap.putAll(rhs.diff(binaryLogicExpr.rhs));
+            if(diffMap.containsKey(lhs) && diffMap.containsKey(rhs)) {
+                diffMap.clear();
+                diffMap.put(this, e);
+            }
+        } else {
+            diffMap.put(this, e);
+        }
+        return diffMap;
     }
 }

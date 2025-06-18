@@ -23,6 +23,10 @@ public class ClassDef extends Def {
         if (hash != null) return;
         hasher.update("ClassDef", constructor);
         ArrayList<Object> tmp = new ArrayList<>();
+        classMem.forEach(d->{
+            d.setHash();
+            tmp.add(d);
+        });
         classFunc.forEach(d->{
             d.setHash();
             tmp.add(d);

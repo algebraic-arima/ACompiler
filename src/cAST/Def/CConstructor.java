@@ -5,6 +5,7 @@ import src.cAST.Stmt.BlockCStmt;
 
 public class CConstructor extends CDef {
     public BlockCStmt funcBody;
+    public String className;
 
     @Override
     public void addChild(BaseCASTNode c) {

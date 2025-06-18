@@ -11,11 +11,6 @@ public class UnaryLogicCExpr extends CExpr {
     public CExpr CExpr;
     public ULogicOp op;
 
-    public UnaryLogicCExpr(CExpr e) {
-        CExpr = e;
-        op = ULogicOp.NOT;
-    }
-
     @Override
     public void addChild(BaseCASTNode c) {
         if (c instanceof CExpr e) {

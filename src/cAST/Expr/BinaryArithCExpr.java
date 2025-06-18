@@ -1,6 +1,10 @@
 package src.cAST.Expr;
 
+import src.AST.Expr.BinaryArithExpr;
 import src.cAST.BaseCASTNode;
+import src.AST.Expr.Expr;
+
+import java.util.HashMap;
 
 public class BinaryArithCExpr extends CExpr {
 
@@ -10,61 +14,6 @@ public class BinaryArithCExpr extends CExpr {
 
     public CExpr lhs, rhs;
     public BArithOp op;
-
-    public BinaryArithCExpr(CExpr lhs, CExpr rhs, String op) {
-        this.lhs = lhs;
-        this.rhs = rhs;
-        switch (op) {
-            case "+":
-                this.op = BArithOp.ADD;
-                break;
-            case "-":
-                this.op = BArithOp.SUB;
-                break;
-            case "*":
-                this.op = BArithOp.MUL;
-                break;
-            case "/":
-                this.op = BArithOp.DIV;
-                break;
-            case "%":
-                this.op = BArithOp.MOD;
-                break;
-            case "<<":
-                this.op = BArithOp.BLS;
-                break;
-            case ">>":
-                this.op = BArithOp.BRS;
-                break;
-            case "&":
-                this.op = BArithOp.BAND;
-                break;
-            case "|":
-                this.op = BArithOp.BOR;
-                break;
-            case "^":
-                this.op = BArithOp.BXOR;
-                break;
-            case "==":
-                this.op = BArithOp.EQ;
-                break;
-            case "!=":
-                this.op = BArithOp.NE;
-                break;
-            case "<":
-                this.op = BArithOp.LT;
-                break;
-            case ">":
-                this.op = BArithOp.GT;
-                break;
-            case "<=":
-                this.op = BArithOp.LE;
-                break;
-            case ">=":
-                this.op = BArithOp.GE;
-                break;
-        }
-    }
 
     @Override
     public void addChild(BaseCASTNode c) {
@@ -79,5 +28,24 @@ public class BinaryArithCExpr extends CExpr {
         } else {
             throw new RuntimeException("BinaryArithExpr can only have Expr children");
         }
+    }
+
+    @Override
+    public HashMap<CExpr, Expr> diff(Expr e) {
+        if (e.hash.equals(hash)) {
+            return new HashMap<>();
+        }
+        HashMap<CExpr, Expr> diffMap = new HashMap<>();
+        if (e instanceof BinaryArithExpr binaryArithExpr) {
+            diffMap.putAll(lhs.diff(binaryArithExpr.lhs));
+            diffMap.putAll(rhs.diff(binaryArithExpr.rhs));
+            if(diffMap.containsKey(lhs) && diffMap.containsKey(rhs)) {
+                diffMap.clear();
+                diffMap.put(this, e);
+            }
+        } else {
+            diffMap.put(this, e);
+        }
+        return diffMap;
     }
 }

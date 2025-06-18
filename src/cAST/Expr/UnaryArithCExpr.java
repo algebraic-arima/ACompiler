@@ -11,24 +11,6 @@ public class UnaryArithCExpr extends CExpr {
     public CExpr CExpr;
     public UArithOp op;
 
-    public UnaryArithCExpr(CExpr e, String o, boolean isLeft) {
-        CExpr = e;
-        switch (o) {
-            case "-":
-                op = UArithOp.NEG;
-                break;
-            case "~":
-                op = UArithOp.BNOT;
-                break;
-            case "++":
-                op = isLeft ? UArithOp.LINC : UArithOp.RINC;
-                break;
-            case "--":
-                op = isLeft ? UArithOp.LDEC : UArithOp.RDEC;
-                break;
-        }
-    }
-
     @Override
     public void addChild(BaseCASTNode c) {
         if (c instanceof CExpr e) {

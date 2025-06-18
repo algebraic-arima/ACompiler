@@ -6,6 +6,8 @@ import java.io.DataOutputStream;
 
 public abstract class BaseASTNode {
     public Position pos;
+    public int cacheInd = -1;
+    public boolean compileFlag = true;
 
     public BaseASTNode(){
         pos = new Position();
@@ -16,6 +18,13 @@ public abstract class BaseASTNode {
     }
 
 //    abstract public void writeData(DataOutputStream dos);
+    public void setNoCompile(){
+        compileFlag = false;
+    }
+
+    public boolean isCompile() {
+        return compileFlag;
+    }
 
     abstract public void accept(__ASTVisitor v);
 

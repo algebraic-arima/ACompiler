@@ -21,13 +21,14 @@ import src.cAST.Stmt.VarDefCStmt;
 
 import java.io.DataInputStream;
 import java.io.EOFException;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 
 public class cacheReader {
     public ArrayList<cBlock> list = new ArrayList<>();
     ArrayList<BaseCASTNode> cNodes = new ArrayList<>();
-    public int curPos = -1;
+    static String cacheDir = "/home/limike/.mcache/";
     CProg cProg;
 
     static ArrayList<Class<?>> classList = new ArrayList<>();
@@ -78,10 +79,13 @@ public class cacheReader {
         classList.add(Separator.class); // 38
     }
 
-    public cacheReader(DataInputStream dis) throws IOException {
+    public cacheReader() throws IOException {
+        FileInputStream i = new FileInputStream(cacheDir + "ast.cache");
+        DataInputStream dis = new DataInputStream(i);
         list = readAllBlocks(dis);
         CAST();
-        cProg = cNodes.getFirst() instanceof CProg ? (CProg) cNodes.getFirst() : null;
+        cProg = (CProg) cNodes.getFirst();
+        cProg.collectFuncHash();
     }
 
     public ArrayList<cBlock> readAllBlocks(DataInputStream dis) throws IOException {
@@ -105,6 +109,13 @@ public class cacheReader {
                     BaseCASTNode cast = (BaseCASTNode) clazz.getDeclaredConstructor().newInstance();
                     cast.hash = ccb.getDataHash();
                     cNodes.add(cast);
+                    switch (cast) {
+                        case CConstructor c -> c.className = ccb.getSymbol();
+                        case ClassCDef c -> c.className = ccb.getSymbol();
+                        case FuncCDef f -> f.funcName = ccb.getSymbol();
+                        default -> {
+                        }
+                    }
                     int par = ccb.getPar();
                     if (par >= 0 && par < cNodes.size()) {
                         cNodes.get(par).addChild(cast);

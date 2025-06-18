@@ -15,7 +15,7 @@ import src.Optim.Jopt.Jopt;
 import src.Optim.Mem2Reg.Mem2Reg;
 import src.Optim.RegAlloc.RegAlloc;
 import src.Semantic.*;
-import src.cacheBlock.cacheManager;
+import src.cacheBlock.astCacheManager;
 import src.cacheBlock.cacheReader;
 import src.parser.Lex;
 import src.parser.Mx;
@@ -29,10 +29,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.stream.Stream;
 
 import io.github.rctcwyvrn.blake3.Blake3;
-import src.utils.type.Type;
 
 public class Main {
 
@@ -81,13 +79,8 @@ public class Main {
                 SemanticChecker sc = new SemanticChecker(gScope);
                 sc.visit(ASTRoot);
 
-                String astcache = cache + ".ast";
-                FileOutputStream c = new FileOutputStream(astcache);
-                DataOutputStream dos = new DataOutputStream(c);
-                FileInputStream i = new FileInputStream(astcache);
-                DataInputStream dis = new DataInputStream(i);
-                cacheManager cm = new cacheManager(ASTRoot, dos);
-                cacheReader cr = new cacheReader(dis);
+                astCacheManager cm = new astCacheManager(ASTRoot);
+                cacheReader cr = new cacheReader();
 
                 IRBuilder irBuilder = new IRBuilder(gScope);
                 IRProg irProg = irBuilder.build(ASTRoot);
@@ -100,21 +93,21 @@ public class Main {
                 System.setOut(printStreamIR);
                 irPrinter.print();
 
-//                Mem2Reg m2r = new Mem2Reg(irProg);
-//                DCE dce = new DCE(irProg);
-//                RegAlloc ra = new RegAlloc(irProg);
-//                ASMBuilder asmBuilder = new ASMBuilder(irBuilder.irProg, false);
-//                ASMProg asmProg = asmBuilder.asmProg;
-//                Jopt j = new Jopt(asmProg);
-//
-//                ASMList.add(asmProg);
-//
-//                ASMPrinter asmPrinter = new ASMPrinter(asmBuilder.asmProg);
-//                String fileOutASM = fileIn.getAbsolutePath().replaceAll(".mx", ".s");
-//                FileOutputStream fileOutputStreamASM = new FileOutputStream(fileOutASM);
-//                PrintStream printStreamASM = new PrintStream(fileOutputStreamASM);
-//                System.setOut(printStreamASM);
-//                asmPrinter.print();
+                Mem2Reg m2r = new Mem2Reg(irProg);
+                DCE dce = new DCE(irProg);
+                RegAlloc ra = new RegAlloc(irProg);
+                ASMBuilder asmBuilder = new ASMBuilder(irBuilder.irProg, false);
+                ASMProg asmProg = asmBuilder.asmProg;
+                Jopt j = new Jopt(asmProg);
+
+                ASMList.add(asmProg);
+
+                ASMPrinter asmPrinter = new ASMPrinter(asmBuilder.asmProg);
+                String fileOutASM = fileIn.getAbsolutePath().replaceAll(".mx", ".s");
+                FileOutputStream fileOutputStreamASM = new FileOutputStream(fileOutASM);
+                PrintStream printStreamASM = new PrintStream(fileOutputStreamASM);
+                System.setOut(printStreamASM);
+                asmPrinter.print();
             } catch (error e) {
                 System.err.println("In " + fileIn + ": (" + e.pos.row + ":" + e.pos.column + ") " + e.message);
                 System.exit(1); // if judge

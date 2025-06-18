@@ -2,11 +2,12 @@
 
 ## Goal
 
-- [ ] Function-Level detect and recompile
+- [x] Function-Level detect and recompile
 - [ ] Expression-Level replacement
 - [ ] Symbol renaming detect
 - - [ ] variable rename
 - - [ ] class rename
+- [ ] string literal replacement
 - [ ] Remote
 
 ## Usage

@@ -38,7 +38,7 @@ public class Diff {
                 if (def != null) {
                     if (def instanceof FuncCDef f) {
                         if (f.hash.equals(funcDef.hash)) {
-                            stable.put(funcDef.hash, funcDef);
+                            stable.put(funcDef.funcName, funcDef);
                             funcDef.setNoCompile();
                         }
                     } else {
@@ -53,7 +53,7 @@ public class Diff {
                     if (def instanceof ClassCDef classCDef) {
                         if (classCDef.hash.equals(classDef.hash)) {
                             for (FuncDef funcDef : classDef.classFunc) {
-                                stable.put(funcDef.hash, funcDef);
+                                stable.put(classDef.className + ".." + funcDef.funcName, funcDef);
                                 funcDef.setNoCompile();
                             }
                         }
@@ -62,11 +62,11 @@ public class Diff {
                     }
                 } else {
                     for (FuncDef funcDef : classDef.classFunc) {
-                        CDef funcCDef = cacheProg.findCachebyName(classDef.className + "::" + funcDef.funcName);
+                        CDef funcCDef = cacheProg.findCachebyName(classDef.className + ".." + funcDef.funcName);
                         if (funcCDef != null) {
                             if (funcCDef instanceof FuncCDef f) {
                                 if (f.hash.equals(funcDef.hash)) {
-                                    stable.put(funcDef.hash, funcDef);
+                                    stable.put(classDef.className + ".." + funcDef.funcName, funcDef);
                                     funcDef.setNoCompile();
                                 }
                             } else {

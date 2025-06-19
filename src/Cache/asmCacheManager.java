@@ -9,24 +9,24 @@ import java.io.PrintStream;
 
 public class asmCacheManager {
 
-    static String cacheDir = "/home/limike/.mcache/asm/";
+    String cacheDir = "/home/limike/.mcache/";
 
-    public asmCacheManager(ASMProg prog) throws IOException {
+    public asmCacheManager(File f, ASMProg prog) throws IOException {
+        cacheDir = cacheDir + f.getName() + "/asm/";
         File file = new File(cacheDir);
-        if(!file.exists() || !file.isDirectory()){
+        if (!file.exists() || !file.isDirectory()) {
             file.mkdir();
         }
         for (var func : prog.funcDefs) {
-            File cf = new File(cacheDir + func.name);
-            if(!file.exists()){
-                cf.createNewFile();
+            FileOutputStream c = new FileOutputStream(cacheDir + func.name);
+            PrintStream o = System.out;
+            try (PrintStream ps = new PrintStream(c)) {
+                System.setOut(ps);
+                System.out.println(func.hash);
+                func.print();
+            } finally {
+                System.setOut(o);
             }
-            FileOutputStream c = new FileOutputStream(cf);
-            PrintStream ps = new PrintStream(c);
-            System.setOut(ps);
-            System.out.println(func.hash);
-            func.print();
-            ps.close();
             c.close();
         }
     }

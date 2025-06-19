@@ -7,7 +7,7 @@ import src.ASM.ASMPrinter;
 import src.ASM.ASMProg;
 import src.AST.ASTBuilder;
 import src.AST.Prog;
-import src.Cache.Diff;
+import src.Cache.*;
 import src.IR.IRBuilder;
 import src.IR.IRPrinter;
 import src.IR.IRProg;
@@ -16,9 +16,6 @@ import src.Optim.Jopt.Jopt;
 import src.Optim.Mem2Reg.Mem2Reg;
 import src.Optim.RegAlloc.RegAlloc;
 import src.Semantic.*;
-import src.Cache.asmCacheManager;
-import src.Cache.astCacheManager;
-import src.Cache.cacheReader;
 import src.cAST.CProg;
 import src.parser.Lex;
 import src.parser.Mx;
@@ -58,8 +55,7 @@ public class Main {
 
     public static void main(String[] args) throws Exception {
 
-        String src = "/home/limike/Git/compiler-2025/testcases/multi/t3/";
-        String cache = "/home/limike/.mcache/";
+        String src = "/home/limike/Git/compiler-2025/testcases/multi/t1/";
         getFiles(src);
 
         for (File fileIn : srcFiles) {
@@ -72,6 +68,8 @@ public class Main {
                 parser.removeErrorListeners();
                 parser.addErrorListener(new MxErrorListener());
                 Mx.ProgContext parseTreeRoot = parser.prog();
+                in.close();
+
                 ASTBuilder AST = new ASTBuilder();
                 Prog ASTRoot = (Prog) AST.visit(parseTreeRoot);
                 ASTRoot.setHash();
@@ -81,23 +79,31 @@ public class Main {
                 sc.visit(ASTRoot);
 
                 // cache the ast
-                astCacheManager cm = new astCacheManager(ASTRoot);
-                cacheReader cr = new cacheReader();
-                if(cr.hasCache()){
+                astCacheManager cm = new astCacheManager(fileIn, ASTRoot);
+                astCacheReader cr = new astCacheReader(fileIn);
+                acmCacheReader acmCache = null;
+                if (cr.hasCache()) {
                     CProg cProg = cr.cProg;
                     Diff diff = new Diff(ASTRoot, cProg);
+                    acmCache = new acmCacheReader(fileIn, diff);
+                    acmCache.readASMCache();
                 }
 
                 IRBuilder irBuilder = new IRBuilder(gScope);
                 IRProg irProg = irBuilder.build(ASTRoot);
                 irProg.reformat();
 
-                IRPrinter irPrinter = new IRPrinter(irBuilder.irProg);
+                PrintStream originalOut = System.out;
                 String fileOutIR = fileIn.getAbsolutePath().replaceAll(".mx", ".ll");
                 FileOutputStream fileOutputStreamIR = new FileOutputStream(fileOutIR);
-                PrintStream printStreamIR = new PrintStream(fileOutputStreamIR);
-                System.setOut(printStreamIR);
-                irPrinter.print();
+                try (PrintStream printStreamIR = new PrintStream(fileOutputStreamIR)) {
+                    System.setOut(printStreamIR);
+                    IRPrinter irPrinter = new IRPrinter(irBuilder.irProg);
+                    irPrinter.print();
+                } finally {
+                    System.setOut(originalOut);
+                }
+                fileOutputStreamIR.close();
 
                 Mem2Reg m2r = new Mem2Reg(irProg);
                 DCE dce = new DCE(irProg);
@@ -108,16 +114,24 @@ public class Main {
 
                 ASMList.add(ASMProg);
 
-                ASMPrinter asmPrinter = new ASMPrinter(ASMProg);
+                originalOut = System.out;
                 String fileOutASM = fileIn.getAbsolutePath().replaceAll(".mx", ".s");
                 FileOutputStream fileOutputStreamASM = new FileOutputStream(fileOutASM);
-                PrintStream printStreamASM = new PrintStream(fileOutputStreamASM);
-                System.setOut(printStreamASM);
-                asmPrinter.print();
+                try (PrintStream printStreamASM = new PrintStream(fileOutputStreamASM)) {
+                    System.setOut(printStreamASM);
+                    ASMPrinter asmPrinter = new ASMPrinter(ASMProg);
+                    if (acmCache != null) {
+                        acmCache.outputCache();
+                    }
+                    asmPrinter.print();
+                } finally {
+                    System.setOut(originalOut);
+                }
+                fileOutputStreamASM.close();
 
                 // cache the asm
                 cm.writeCache();
-                asmCacheManager asmCache = new asmCacheManager(ASMProg);
+                asmCacheManager asmCache = new asmCacheManager(fileIn, ASMProg);
 
             } catch (error e) {
                 System.err.println("In " + fileIn + ": (" + e.pos.row + ":" + e.pos.column + ") " + e.message);

@@ -17,9 +17,12 @@ public abstract class BaseASTNode {
         pos = p;
     }
 
-//    abstract public void writeData(DataOutputStream dos);
     public void setNoCompile(){
         compileFlag = false;
+    }
+
+    public void setCompile(){
+        compileFlag = true;
     }
 
     public boolean isCompile() {

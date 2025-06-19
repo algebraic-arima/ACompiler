@@ -5,22 +5,22 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 
-public class cBlock {
+public class cacheBlock {
     byte[] typeHash = new byte[4];
     byte[] dataHash = new byte[64];
     byte[] par = new byte[4];
     byte[] symbol = new byte[56];
 
-    public cBlock() {
+    public cacheBlock() {
     }
 
-    public cBlock(int classHash, String dataHash, int p) {
+    public cacheBlock(int classHash, String dataHash, int p) {
         setTypeHash(classHash);
         setDataHash(dataHash);
         setPar(p);
     }
 
-    public cBlock(int classHash, String dataHash, int p, String s) {
+    public cacheBlock(int classHash, String dataHash, int p, String s) {
         setTypeHash(classHash);
         setDataHash(dataHash);
         setPar(p);
@@ -75,8 +75,8 @@ public class cBlock {
         dos.write(this.symbol);
     }
 
-    public static cBlock readFromStream(DataInputStream dis) throws IOException {
-        cBlock block = new cBlock();
+    public static cacheBlock readFromStream(DataInputStream dis) throws IOException {
+        cacheBlock block = new cacheBlock();
         dis.readFully(block.typeHash);
         dis.readFully(block.dataHash);
         dis.readFully(block.par);

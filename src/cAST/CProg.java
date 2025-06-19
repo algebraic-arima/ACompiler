@@ -5,6 +5,7 @@ import src.AST.Def.FuncDef;
 import src.cAST.Def.CDef;
 import src.cAST.Def.ClassCDef;
 import src.cAST.Def.FuncCDef;
+import src.cAST.Def.VarCDef;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -33,9 +34,10 @@ public class CProg extends BaseCASTNode {
                 defsMap.put(classCDef.className, classCDef);
                 hashMap.put(classCDef.hash, classCDef);
                 for (FuncCDef funcCDef : classCDef.classFunc) {
-                    defsMap.put(classCDef.className + "::" + funcCDef.funcName, funcCDef);
+                    defsMap.put(classCDef.className + ".." + funcCDef.funcName, funcCDef);
                     hashMap.put(funcCDef.hash, funcCDef);
                 }
+            } else if (def instanceof VarCDef) {
             } else {
                 throw new RuntimeException("Cache definition type mismatch!");
             }

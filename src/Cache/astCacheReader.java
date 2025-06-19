@@ -19,17 +19,14 @@ import src.cAST.Stmt.LoopStmt.ForCStmt;
 import src.cAST.Stmt.LoopStmt.WhileCStmt;
 import src.cAST.Stmt.VarDefCStmt;
 
-import java.io.DataInputStream;
-import java.io.EOFException;
-import java.io.FileInputStream;
-import java.io.IOException;
+import java.io.*;
 import java.util.ArrayList;
 
-public class cacheReader {
+public class astCacheReader {
     public boolean cached = true;
-    public ArrayList<cBlock> list = new ArrayList<>();
+    public ArrayList<cacheBlock> list = new ArrayList<>();
     ArrayList<BaseCASTNode> cNodes = new ArrayList<>();
-    static String cacheDir = "/home/limike/.mcache/";
+    String cacheDir = "/home/limike/.mcache/";
     public CProg cProg;
 
     static ArrayList<Class<?>> classList = new ArrayList<>();
@@ -80,7 +77,8 @@ public class cacheReader {
         classList.add(Separator.class); // 38
     }
 
-    public cacheReader() {
+    public astCacheReader(File f) {
+        cacheDir = cacheDir + f.getName() + "/";
         try {
             FileInputStream i = new FileInputStream(cacheDir + "ast.cache");
             DataInputStream dis = new DataInputStream(i);
@@ -98,11 +96,11 @@ public class cacheReader {
         return cached;
     }
 
-    public ArrayList<cBlock> readAllBlocks(DataInputStream dis) throws IOException {
-        ArrayList<cBlock> blocks = new ArrayList<>();
+    public ArrayList<cacheBlock> readAllBlocks(DataInputStream dis) throws IOException {
+        ArrayList<cacheBlock> blocks = new ArrayList<>();
         while (true) {
             try {
-                blocks.add(cBlock.readFromStream(dis));
+                blocks.add(cacheBlock.readFromStream(dis));
             } catch (EOFException e) {
                 break;
             }
@@ -111,7 +109,7 @@ public class cacheReader {
     }
 
     public void CAST(){
-        for(cBlock ccb: list){
+        for(cacheBlock ccb: list){
             int ind = ccb.getTypeHash();
             Class<?> clazz = classList.get(ind);
             if (clazz != null) {

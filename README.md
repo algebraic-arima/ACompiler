@@ -2,13 +2,15 @@
 
 ## Goal
 
-- [x] Function-Level detect and recompile
-- [ ] Expression-Level replacement
+- [x] Linker
+- [x] Function-level detect and recompile
+- [x] Expression-level replacement
 - [ ] Symbol renaming detect
 - - [ ] variable rename
 - - [ ] class rename
-- [ ] string literal replacement
-- [ ] Remote
+- [ ] String literal replacement
+- [ ] ~~Remote~~
+- [ ] Multi-Threading
 
 ## Usage
 

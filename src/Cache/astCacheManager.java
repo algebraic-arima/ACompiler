@@ -26,12 +26,17 @@ import java.io.*;
 import java.util.ArrayList;
 
 public class astCacheManager implements __ASTVisitor {
-    public ArrayList<cBlock> list = new ArrayList<>();
-    static String cacheDir = "/home/limike/.mcache/";
+    public ArrayList<cacheBlock> list = new ArrayList<>();
+    String cacheDir = "/home/limike/.mcache/";
     public int curPos = -1;
 
-    public astCacheManager(Prog p) throws IOException {
+    public astCacheManager(File f, Prog p) throws IOException {
         p.accept(this);
+        cacheDir = cacheDir + f.getName() + "/";
+        File file = new File(cacheDir);
+        if (!file.exists() || !file.isDirectory()) {
+            file.mkdir();
+        }
     }
 
     public void writeCache() throws IOException {
@@ -43,7 +48,7 @@ public class astCacheManager implements __ASTVisitor {
     }
 
     public void writeCache(DataOutputStream dos) throws IOException {
-        for (cBlock c : list) {
+        for (cacheBlock c : list) {
             c.writeToStream(dos);
         }
     }
@@ -51,7 +56,7 @@ public class astCacheManager implements __ASTVisitor {
     @Override
     public void visit(Prog node) {
         int tmp = curPos;
-        cBlock c = new cBlock(0, node.hash, tmp);
+        cacheBlock c = new cacheBlock(0, node.hash, tmp);
         node.cacheInd = curPos = list.size();
         list.add(c);
         node.defs.forEach(d -> d.accept(this));
@@ -61,7 +66,7 @@ public class astCacheManager implements __ASTVisitor {
     @Override
     public void visit(ClassDef node) {
         int tmp = curPos;
-        cBlock c = new cBlock(1, node.hash, tmp, node.className);
+        cacheBlock c = new cacheBlock(1, node.hash, tmp, node.className);
         node.cacheInd = curPos = list.size();
         list.add(c);
         node.classMem.forEach(d -> d.accept(this));
@@ -77,7 +82,7 @@ public class astCacheManager implements __ASTVisitor {
     @Override
     public void visit(Constructor node) {
         int tmp = curPos;
-        cBlock c = new cBlock(2, node.hash, tmp, node.className);
+        cacheBlock c = new cacheBlock(2, node.hash, tmp, node.className);
         node.cacheInd = curPos = list.size();
         list.add(c);
         node.funcBody.accept(this);
@@ -87,7 +92,7 @@ public class astCacheManager implements __ASTVisitor {
     @Override
     public void visit(FuncDef node) {
         int tmp = curPos;
-        cBlock c = new cBlock(3, node.hash, tmp, node.funcName);
+        cacheBlock c = new cacheBlock(3, node.hash, tmp, node.funcName);
         node.cacheInd = curPos = list.size();
         list.add(c);
         node.funcBody.accept(this);
@@ -97,7 +102,7 @@ public class astCacheManager implements __ASTVisitor {
     @Override
     public void visit(VarDef node) {
         int tmp = curPos;
-        cBlock c = new cBlock(4, node.hash, tmp, node.getClass().toString());
+        cacheBlock c = new cacheBlock(4, node.hash, tmp, node.getClass().toString());
         node.cacheInd = curPos = list.size();
         list.add(c);
         node.initVals.values().forEach(d -> {
@@ -131,14 +136,14 @@ public class astCacheManager implements __ASTVisitor {
 
     @Override
     public void visit(BreakStmt node) {
-        cBlock c = new cBlock(8, node.hash, curPos, node.getClass().toString());
+        cacheBlock c = new cacheBlock(8, node.hash, curPos, node.getClass().toString());
         node.cacheInd = list.size();
         list.add(c);
     }
 
     @Override
     public void visit(ContinueStmt node) {
-        cBlock c = new cBlock(9, node.hash, curPos, node.getClass().toString());
+        cacheBlock c = new cacheBlock(9, node.hash, curPos, node.getClass().toString());
         node.cacheInd = list.size();
         list.add(c);
 
@@ -147,7 +152,7 @@ public class astCacheManager implements __ASTVisitor {
     @Override
     public void visit(ReturnStmt node) {
         int tmp = curPos;
-        cBlock c = new cBlock(11, node.hash, tmp, node.getClass().toString());
+        cacheBlock c = new cacheBlock(11, node.hash, tmp, node.getClass().toString());
         node.cacheInd = curPos = list.size();
         list.add(c);
         node.retExpr.accept(this);
@@ -157,7 +162,7 @@ public class astCacheManager implements __ASTVisitor {
     @Override
     public void visit(IfStmt node) {
         int tmp = curPos;
-        cBlock c = new cBlock(10, node.hash, tmp, node.getClass().toString());
+        cacheBlock c = new cacheBlock(10, node.hash, tmp, node.getClass().toString());
         node.cacheInd = curPos = list.size();
         list.add(c);
         node.condition.accept(this);
@@ -169,7 +174,7 @@ public class astCacheManager implements __ASTVisitor {
     @Override
     public void visit(WhileStmt node) {
         int tmp = curPos;
-        cBlock c = new cBlock(13, node.hash, tmp, node.getClass().toString());
+        cacheBlock c = new cacheBlock(13, node.hash, tmp, node.getClass().toString());
         node.cacheInd = curPos = list.size();
         list.add(c);
         node.cond.accept(this);
@@ -180,7 +185,7 @@ public class astCacheManager implements __ASTVisitor {
     @Override
     public void visit(ForStmt node) {
         int tmp = curPos;
-        cBlock c = new cBlock(12, node.hash, tmp, node.getClass().toString());
+        cacheBlock c = new cacheBlock(12, node.hash, tmp, node.getClass().toString());
         node.cacheInd = curPos = list.size();
         list.add(c);
         node.init.accept(this);
@@ -193,7 +198,7 @@ public class astCacheManager implements __ASTVisitor {
     @Override
     public void visit(VarDefStmt node) {
         int tmp = curPos;
-        cBlock c = new cBlock(14, node.hash, tmp, node.getClass().toString());
+        cacheBlock c = new cacheBlock(14, node.hash, tmp, node.getClass().toString());
         node.cacheInd = curPos = list.size();
         list.add(c);
         node.varDef.accept(this);
@@ -203,7 +208,7 @@ public class astCacheManager implements __ASTVisitor {
     @Override
     public void visit(ExprStmt node) {
         int tmp = curPos;
-        cBlock c = new cBlock(7, node.hash, tmp, node.getClass().toString());
+        cacheBlock c = new cacheBlock(7, node.hash, tmp, node.getClass().toString());
         node.cacheInd = curPos = list.size();
         list.add(c);
         node.expr.accept(this);
@@ -213,16 +218,16 @@ public class astCacheManager implements __ASTVisitor {
     @Override
     public void visit(BlockStmt node) {
         int tmp = curPos;
-        cBlock c = new cBlock(5, node.hash, tmp, node.getClass().toString());
+        cacheBlock c = new cacheBlock(5, node.hash, tmp, node.getClass().toString());
         node.cacheInd = curPos = list.size();
         list.add(c);
-        node.stmts.forEach(d ->d.accept(this));
+        node.stmts.forEach(d -> d.accept(this));
         curPos = tmp;
     }
 
     @Override
     public void visit(EmptyStmt node) {
-        cBlock c = new cBlock(6, node.hash, curPos, node.getClass().toString());
+        cacheBlock c = new cacheBlock(6, node.hash, curPos, node.getClass().toString());
         node.cacheInd = list.size();
         list.add(c);
     }
@@ -230,7 +235,7 @@ public class astCacheManager implements __ASTVisitor {
     @Override
     public void visit(ArrayAccessExpr node) {
         int tmp = curPos;
-        cBlock c = new cBlock(15, node.hash, tmp, node.getClass().toString());
+        cacheBlock c = new cacheBlock(15, node.hash, tmp, node.getClass().toString());
         node.cacheInd = curPos = list.size();
         list.add(c);
         node.array.accept(this);
@@ -241,17 +246,17 @@ public class astCacheManager implements __ASTVisitor {
     @Override
     public void visit(ArrayLiteralExpr node) {
         int tmp = curPos;
-        cBlock c = new cBlock(16, node.hash, tmp, node.getClass().toString());
+        cacheBlock c = new cacheBlock(16, node.hash, tmp, node.getClass().toString());
         node.cacheInd = curPos = list.size();
         list.add(c);
-        node.elements.forEach(d ->d.accept(this));
+        node.elements.forEach(d -> d.accept(this));
         curPos = tmp;
     }
 
     @Override
     public void visit(AssignExpr node) {
         int tmp = curPos;
-        cBlock c = new cBlock(17, node.hash, tmp, node.getClass().toString());
+        cacheBlock c = new cacheBlock(17, node.hash, tmp, node.getClass().toString());
         node.cacheInd = curPos = list.size();
         list.add(c);
         node.var.accept(this);
@@ -263,7 +268,7 @@ public class astCacheManager implements __ASTVisitor {
     @Override
     public void visit(BinaryArithExpr node) {
         int tmp = curPos;
-        cBlock c = new cBlock(18, node.hash, tmp, node.getClass().toString());
+        cacheBlock c = new cacheBlock(18, node.hash, tmp, node.getClass().toString());
         node.cacheInd = curPos = list.size();
         list.add(c);
         node.lhs.accept(this);
@@ -274,7 +279,7 @@ public class astCacheManager implements __ASTVisitor {
     @Override
     public void visit(BinaryLogicExpr node) {
         int tmp = curPos;
-        cBlock c = new cBlock(19, node.hash, tmp, node.getClass().toString());
+        cacheBlock c = new cacheBlock(19, node.hash, tmp, node.getClass().toString());
         node.cacheInd = curPos = list.size();
         list.add(c);
         node.lhs.accept(this);
@@ -284,7 +289,7 @@ public class astCacheManager implements __ASTVisitor {
 
     @Override
     public void visit(BoolLiteralExpr node) {
-        cBlock c = new cBlock(20, node.hash, curPos, node.getClass().toString());
+        cacheBlock c = new cacheBlock(20, node.hash, curPos, node.getClass().toString());
         node.cacheInd = list.size();
         list.add(c);
     }
@@ -292,17 +297,17 @@ public class astCacheManager implements __ASTVisitor {
     @Override
     public void visit(FmtStrLiteralExpr node) {
         int tmp = curPos;
-        cBlock c = new cBlock(21, node.hash, tmp, node.getClass().toString());
+        cacheBlock c = new cacheBlock(21, node.hash, tmp, node.getClass().toString());
         node.cacheInd = curPos = list.size();
         list.add(c);
-        node.exprs.forEach(d ->d.accept(this));
+        node.exprs.forEach(d -> d.accept(this));
         curPos = tmp;
     }
 
     @Override
     public void visit(FuncCallExpr node) {
         int tmp = curPos;
-        cBlock c = new cBlock(22, node.hash, tmp, node.getClass().toString());
+        cacheBlock c = new cacheBlock(22, node.hash, tmp, node.getClass().toString());
         node.cacheInd = curPos = list.size();
         list.add(c);
         node.args.accept(this);
@@ -311,7 +316,7 @@ public class astCacheManager implements __ASTVisitor {
 
     @Override
     public void visit(IntLiteralExpr node) {
-        cBlock c = new cBlock(23, node.hash, curPos, node.getClass().toString());
+        cacheBlock c = new cacheBlock(23, node.hash, curPos, node.getClass().toString());
         node.cacheInd = list.size();
         list.add(c);
     }
@@ -319,7 +324,7 @@ public class astCacheManager implements __ASTVisitor {
     @Override
     public void visit(MemberFuncCallExpr node) {
         int tmp = curPos;
-        cBlock c = new cBlock(24, node.hash, tmp, node.getClass().toString());
+        cacheBlock c = new cacheBlock(24, node.hash, tmp, node.getClass().toString());
         node.cacheInd = curPos = list.size();
         list.add(c);
         node.obj.accept(this);
@@ -330,7 +335,7 @@ public class astCacheManager implements __ASTVisitor {
     @Override
     public void visit(MemberObjAccessExpr node) {
         int tmp = curPos;
-        cBlock c = new cBlock(25, node.hash, tmp, node.getClass().toString());
+        cacheBlock c = new cacheBlock(25, node.hash, tmp, node.getClass().toString());
         node.cacheInd = curPos = list.size();
         list.add(c);
         node.obj.accept(this);
@@ -340,7 +345,7 @@ public class astCacheManager implements __ASTVisitor {
     @Override
     public void visit(NewArrayExpr node) {
         int tmp = curPos;
-        cBlock c = new cBlock(26, node.hash, tmp, node.getClass().toString());
+        cacheBlock c = new cacheBlock(26, node.hash, tmp, node.getClass().toString());
         node.cacheInd = curPos = list.size();
         list.add(c);
         node.len.forEach(d -> d.accept(this));
@@ -350,7 +355,7 @@ public class astCacheManager implements __ASTVisitor {
     @Override
     public void visit(NewArrayInitExpr node) {
         int tmp = curPos;
-        cBlock c = new cBlock(27, node.hash, tmp, node.getClass().toString());
+        cacheBlock c = new cacheBlock(27, node.hash, tmp, node.getClass().toString());
         node.cacheInd = curPos = list.size();
         list.add(c);
         node.init.accept(this);
@@ -359,14 +364,14 @@ public class astCacheManager implements __ASTVisitor {
 
     @Override
     public void visit(NewTypeExpr node) {
-        cBlock c = new cBlock(28, node.hash, curPos, node.getClass().toString());
+        cacheBlock c = new cacheBlock(28, node.hash, curPos, node.getClass().toString());
         node.cacheInd = list.size();
         list.add(c);
     }
 
     @Override
     public void visit(NullExpr node) {
-        cBlock c = new cBlock(29, node.hash, curPos, node.getClass().toString());
+        cacheBlock c = new cacheBlock(29, node.hash, curPos, node.getClass().toString());
         node.cacheInd = list.size();
         list.add(c);
     }
@@ -374,7 +379,7 @@ public class astCacheManager implements __ASTVisitor {
     @Override
     public void visit(ParenthesesExpr node) {
         int tmp = curPos;
-        cBlock c = new cBlock(30, node.hash, tmp, node.getClass().toString());
+        cacheBlock c = new cacheBlock(30, node.hash, tmp, node.getClass().toString());
         node.cacheInd = curPos = list.size();
         list.add(c);
         node.expr.accept(this);
@@ -384,7 +389,7 @@ public class astCacheManager implements __ASTVisitor {
     @Override
     public void visit(RowExpr node) {
         int tmp = curPos;
-        cBlock c = new cBlock(31, node.hash, tmp, node.getClass().toString());
+        cacheBlock c = new cacheBlock(31, node.hash, tmp, node.getClass().toString());
         node.cacheInd = curPos = list.size();
         list.add(c);
         node.exps.forEach(d -> d.accept(this));
@@ -393,7 +398,7 @@ public class astCacheManager implements __ASTVisitor {
 
     @Override
     public void visit(StringLiteralExpr node) {
-        cBlock c = new cBlock(32, node.hash, curPos, node.getClass().toString());
+        cacheBlock c = new cacheBlock(32, node.hash, curPos, node.getClass().toString());
         node.cacheInd = list.size();
         list.add(c);
     }
@@ -401,7 +406,7 @@ public class astCacheManager implements __ASTVisitor {
     @Override
     public void visit(TernaryBranchExpr node) {
         int tmp = curPos;
-        cBlock c = new cBlock(33, node.hash, tmp, node.getClass().toString());
+        cacheBlock c = new cacheBlock(33, node.hash, tmp, node.getClass().toString());
         node.cacheInd = curPos = list.size();
         list.add(c);
         node.cond.accept(this);
@@ -412,7 +417,7 @@ public class astCacheManager implements __ASTVisitor {
 
     @Override
     public void visit(ThisPtrExpr node) {
-        cBlock c = new cBlock(34, node.hash, curPos, node.getClass().toString());
+        cacheBlock c = new cacheBlock(34, node.hash, curPos, node.getClass().toString());
         node.cacheInd = list.size();
         list.add(c);
     }
@@ -420,7 +425,7 @@ public class astCacheManager implements __ASTVisitor {
     @Override
     public void visit(UnaryArithExpr node) {
         int tmp = curPos;
-        cBlock c = new cBlock(35, node.hash, tmp, node.getClass().toString());
+        cacheBlock c = new cacheBlock(35, node.hash, tmp, node.getClass().toString());
         node.cacheInd = curPos = list.size();
         list.add(c);
         node.expr.accept(this);
@@ -430,7 +435,7 @@ public class astCacheManager implements __ASTVisitor {
     @Override
     public void visit(UnaryLogicExpr node) {
         int tmp = curPos;
-        cBlock c = new cBlock(36, node.hash, tmp, node.getClass().toString());
+        cacheBlock c = new cacheBlock(36, node.hash, tmp, node.getClass().toString());
         node.cacheInd = curPos = list.size();
         list.add(c);
         node.expr.accept(this);
@@ -439,7 +444,7 @@ public class astCacheManager implements __ASTVisitor {
 
     @Override
     public void visit(VarExpr node) {
-        cBlock c = new cBlock(37, node.hash, curPos, node.getClass().toString());
+        cacheBlock c = new cacheBlock(37, node.hash, curPos, node.getClass().toString());
         node.cacheInd = list.size();
         list.add(c);
     }

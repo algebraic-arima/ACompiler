@@ -1,6 +1,4 @@
-package src.cacheBlock;
-
-import src.AST.BaseASTNode;
+package src.Cache;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -74,6 +72,7 @@ public class cBlock {
         dos.write(this.typeHash);
         dos.write(this.dataHash);
         dos.write(this.par);
+        dos.write(this.symbol);
     }
 
     public static cBlock readFromStream(DataInputStream dis) throws IOException {
@@ -81,6 +80,7 @@ public class cBlock {
         dis.readFully(block.typeHash);
         dis.readFully(block.dataHash);
         dis.readFully(block.par);
+        dis.readFully(block.symbol);
         return block;
     }
 }

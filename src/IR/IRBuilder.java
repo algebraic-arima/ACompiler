@@ -141,6 +141,9 @@ public class IRBuilder implements __ASTVisitor {
         if(!node.isCompile()) return;
         if (curScope.isGlobal()) {
             IRFuncDef f = new IRFuncDef("@" + node.funcName);
+            f.className = null;
+            f.funcName = node.funcName;
+            f.hash = node.hash;
             irProg.addFuncDef(f);
             f.retType = new IRType(node.retType);
             curBlock = new IRBlock("entry");
@@ -180,6 +183,9 @@ public class IRBuilder implements __ASTVisitor {
             RollBack();
         } else {
             IRFuncDef f = new IRFuncDef("@" + curClassDef + ".." + node.funcName);
+            f.className = curClassDef;
+            f.funcName = node.funcName;
+            f.hash = node.hash;
             irProg.addFuncDef(f);
             f.retType = new IRType(node.retType);
             curBlock = new IRBlock("entry");
@@ -239,6 +245,7 @@ public class IRBuilder implements __ASTVisitor {
         curFunc = new IRFuncDef("@" + node.className + ".." + node.className);
         curFunc.paramNames.add("%this.val");
         curFunc.paramTypes.add(typePtr);
+        curFunc.hash = node.constructor.hash;
         Register originThisReg = Register.newReg("%this");
         Register thisReg = Register.newReg("%this..tmp");
         curFunc.addAlloca(new Alloca(typePtr, originThisReg));
@@ -296,6 +303,7 @@ public class IRBuilder implements __ASTVisitor {
                         IRFuncDef init = new IRFuncDef("@.init.global." + entry.getKey());
                         curBlock = new IRBlock("entry");
                         curFunc = init;
+                        curFunc.hash = node.hash;
                         entry.getValue().accept(this);
                         curBlock.addInst(new Store(new IRType(node.type), entry.getValue().entity, Register.newReg(g.name)));
                         curBlock.addInst(new Ret());

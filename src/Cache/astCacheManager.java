@@ -1,4 +1,4 @@
-package src.cacheBlock;
+package src.Cache;
 
 import src.AST.__ASTVisitor;
 import src.AST.Dec.ClassDec;
@@ -32,9 +32,14 @@ public class astCacheManager implements __ASTVisitor {
 
     public astCacheManager(Prog p) throws IOException {
         p.accept(this);
+    }
+
+    public void writeCache() throws IOException {
         FileOutputStream c = new FileOutputStream(cacheDir + "ast.cache");
         DataOutputStream dos = new DataOutputStream(c);
         writeCache(dos);
+        dos.close();
+        c.close();
     }
 
     public void writeCache(DataOutputStream dos) throws IOException {

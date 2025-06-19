@@ -9,6 +9,9 @@ public class ASMFuncDef extends ASMNode {
     public String name;
     public ArrayList<ASMBlock> blocks;
     public int stackSize; // in byte
+    public String className = null; // = null if not a method
+    public String funcName;
+    public String hash;
 
     public ASMFuncDef(String name) {
         this.name = name;

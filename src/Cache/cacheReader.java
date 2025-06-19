@@ -1,4 +1,4 @@
-package src.cacheBlock;
+package src.Cache;
 
 import src.cAST.BaseCASTNode;
 import src.cAST.CProg;
@@ -26,10 +26,11 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 public class cacheReader {
+    public boolean cached = true;
     public ArrayList<cBlock> list = new ArrayList<>();
     ArrayList<BaseCASTNode> cNodes = new ArrayList<>();
     static String cacheDir = "/home/limike/.mcache/";
-    CProg cProg;
+    public CProg cProg;
 
     static ArrayList<Class<?>> classList = new ArrayList<>();
 
@@ -79,13 +80,22 @@ public class cacheReader {
         classList.add(Separator.class); // 38
     }
 
-    public cacheReader() throws IOException {
-        FileInputStream i = new FileInputStream(cacheDir + "ast.cache");
-        DataInputStream dis = new DataInputStream(i);
-        list = readAllBlocks(dis);
-        CAST();
-        cProg = (CProg) cNodes.getFirst();
-        cProg.collectFuncHash();
+    public cacheReader() {
+        try {
+            FileInputStream i = new FileInputStream(cacheDir + "ast.cache");
+            DataInputStream dis = new DataInputStream(i);
+            list = readAllBlocks(dis);
+            CAST();
+            cProg = (CProg) cNodes.getFirst();
+            cProg.collectFuncHash();
+        } catch (IOException e){
+            System.out.println("no cache file found");
+            cached = false;
+        }
+    }
+
+    public boolean hasCache(){
+        return cached;
     }
 
     public ArrayList<cBlock> readAllBlocks(DataInputStream dis) throws IOException {
@@ -109,10 +119,11 @@ public class cacheReader {
                     BaseCASTNode cast = (BaseCASTNode) clazz.getDeclaredConstructor().newInstance();
                     cast.hash = ccb.getDataHash();
                     cNodes.add(cast);
+                    String s = ccb.getSymbol();
                     switch (cast) {
-                        case CConstructor c -> c.className = ccb.getSymbol();
-                        case ClassCDef c -> c.className = ccb.getSymbol();
-                        case FuncCDef f -> f.funcName = ccb.getSymbol();
+                        case CConstructor c -> c.className = s;
+                        case ClassCDef c -> c.className = s;
+                        case FuncCDef f -> f.funcName = s;
                         default -> {
                         }
                     }

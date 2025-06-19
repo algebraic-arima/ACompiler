@@ -20,6 +20,9 @@ public class IRFuncDef extends IRDef {
     public int funcParamMax = 0;
     public int regNum = 0;
     public boolean hasCall = false;
+    public String className = null; // = null if not a method
+    public String funcName;
+    public String hash;
 
     public IRFuncDef(String name) {
         retType = new IRType();

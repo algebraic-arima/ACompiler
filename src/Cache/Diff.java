@@ -1,4 +1,4 @@
-package src.cacheBlock;
+package src.Cache;
 
 import src.AST.Def.ClassDef;
 import src.AST.Def.Def;

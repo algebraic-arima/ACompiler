@@ -49,6 +49,7 @@ public class IRBuilder implements __ASTVisitor {
     public IRFuncDef curFunc;
     public ArrayList<IRFuncDef> initFunc;
     public HashMap<String, Integer> tmpClass;
+    String fn;
 
     public IRBlock breakBlock = null, contBlock = null;
 
@@ -93,7 +94,8 @@ public class IRBuilder implements __ASTVisitor {
         curScope = curScope.parent;
     }
 
-    public IRBuilder(GlobalScope gScope) {
+    public IRBuilder(GlobalScope gScope, String fn) {
+        this.fn = fn;
         irProg = new IRProg();
         curBlock = null;
         initFunc = new ArrayList<>();
@@ -872,13 +874,13 @@ public class IRBuilder implements __ASTVisitor {
     @Override
     public void visit(FmtStrLiteralExpr node) {
         node.exprs.forEach(e -> e.accept(this));
-        Register result = Register.newReg(typePtr, irProg.strDef.getString(node.strs.getFirst()));
+        Register result = Register.newReg(typePtr, irProg.strDef.getString(node.strs.getFirst(), fn));
         for (int i = 0; i < node.exprs.size(); ++i) {
             Expr e = node.exprs.get(i);
             String str = node.strs.get(i + 1);
 
             Register toStrRes;
-            Register strReg = Register.newReg(typePtr, irProg.strDef.getString(str));
+            Register strReg = Register.newReg(typePtr, irProg.strDef.getString(str, fn));
 
             if (e.type.isString()) {
                 toStrRes = (Register) e.entity;
@@ -1320,7 +1322,7 @@ public class IRBuilder implements __ASTVisitor {
 
     @Override
     public void visit(StringLiteralExpr node) {
-        node.entity = Register.newReg(typePtr, irProg.strDef.getString(node.value));
+        node.entity = Register.newReg(typePtr, irProg.strDef.getString(node.value, fn));
     }
 
     /*

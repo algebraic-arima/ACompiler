@@ -96,6 +96,7 @@ public class acmCacheReader {
     }
 
     public void outputCache() throws IOException {
+        System.out.println("  .section .text");
         for (List<String> lines : asmFromCache) {
             for (String line : lines) {
                 System.out.println(line);

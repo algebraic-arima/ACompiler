@@ -11,6 +11,7 @@ import src.Cache.*;
 import src.IR.IRBuilder;
 import src.IR.IRPrinter;
 import src.IR.IRProg;
+import src.Linker.Linker;
 import src.Optim.DCE.DCE;
 import src.Optim.Jopt.Jopt;
 import src.Optim.Mem2Reg.Mem2Reg;
@@ -38,7 +39,6 @@ import java.util.concurrent.locks.ReentrantLock;
 public class Main {
 
     static ArrayList<File> srcFiles = new ArrayList<>();
-    static ArrayList<File> asmFiles = new ArrayList<>();
     static final ReentrantLock globalLock = new ReentrantLock();
 
     static void getFiles(String dir) {
@@ -48,8 +48,6 @@ public class Main {
                 if (Files.isRegularFile(path)) {
                     if (path.toString().endsWith(".mx")) {
                         srcFiles.add(path.toFile());
-                    } else if (path.toString().endsWith(".s")) {
-                        asmFiles.add(path.toFile());
                     }
                 }
             }
@@ -87,11 +85,15 @@ public class Main {
             System.exit(1);
         }
 
+        Linker l = new Linker(srcFiles, src + "code.s");
+
         System.exit(0);
     }
 
     public static void processFile(File fileIn) {
         try {
+            String fileName = fileIn.getName();
+            fileName = fileName.substring(0, fileName.length() - 3);
             InputStream in = new FileInputStream(fileIn);
             Lex lexer = new Lex(CharStreams.fromStream(in));
             lexer.removeErrorListeners();
@@ -121,7 +123,7 @@ public class Main {
                 acmCache.readASMCache();
             }
 
-            IRBuilder irBuilder = new IRBuilder(gScope);
+            IRBuilder irBuilder = new IRBuilder(gScope, fileName);
             IRProg irProg = irBuilder.build(ASTRoot);
             irProg.reformat();
             IRPrinter irPrinter = new IRPrinter(irBuilder.irProg);
@@ -140,7 +142,7 @@ public class Main {
             Mem2Reg m2r = new Mem2Reg(irProg);
             DCE dce = new DCE(irProg);
             RegAlloc ra = new RegAlloc(irProg);
-            ASMBuilder asmBuilder = new ASMBuilder(irBuilder.irProg, false);
+            ASMBuilder asmBuilder = new ASMBuilder(irBuilder.irProg, false, fileName);
             ASMProg ASMProg = asmBuilder.asmProg;
             Jopt j = new Jopt(ASMProg);
 

@@ -13,11 +13,11 @@ public class IRStrDef extends IRDef {
         strMap = new LinkedHashMap<>();
     }
 
-    public String getString(String s) {
+    public String getString(String s, String fn) {
         if (!strMap.containsKey((s))) {
             return null;
         } else {
-            return "@constStr-" + (strMap.get(s));
+            return "@" + fn + "-constStr-" + (strMap.get(s));
         }
     }
 

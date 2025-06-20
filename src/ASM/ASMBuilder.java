@@ -33,8 +33,10 @@ public class ASMBuilder implements IRVisitor {
     public IRBlock curIRBlock;
     public int occSP = 0;
     boolean p;
+    String fn;
 
-    public ASMBuilder(IRProg prog, boolean p) {
+    public ASMBuilder(IRProg prog, boolean p, String fileName) {
+        fn = fileName;
         this.p = p;
         classDefs = new HashMap<>();
         curIRFuncDef = null;
@@ -105,7 +107,7 @@ public class ASMBuilder implements IRVisitor {
     @Override
     public void visit(IRStrDef node) {
         node.strMap.forEach((k, v) -> {
-            asmProg.gStrDefs.add(new ASMGStrDef("constStr_" + v, k));
+            asmProg.gStrDefs.add(new ASMGStrDef(fn + "_constStr_" + v, k));
         });
     }
 

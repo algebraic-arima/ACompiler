@@ -1,6 +1,7 @@
 package src.ASM.ASMDef;
 
 import src.ASM.ASMNode;
+import src.AST.Def.Def;
 
 import java.util.ArrayList;
 
@@ -11,7 +12,7 @@ public class ASMFuncDef extends ASMNode {
     public int stackSize; // in byte
     public String className = null; // = null if not a method
     public String funcName;
-    public String hash;
+    public Def fd;
 
     public ASMFuncDef(String name) {
         this.name = name;

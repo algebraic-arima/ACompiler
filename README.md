@@ -6,11 +6,31 @@
 - [x] Function-level detect and recompile
 - [x] Expression-level replacement
 - [ ] Symbol renaming detect
+- - [x] function rename
 - - [ ] variable rename
 - - [ ] class rename
 - [ ] String literal replacement
 - [ ] ~~Remote~~
-- [ ] Multi-Threading
+- [x] Multi-Threading (a big lock)
+
+## Cache structure
+
+`${file_name}.ast.cache` is an array of cache blocks which is of exactly 256 bytes.
+
+```
+|--type---|-----hash-of-the-sub-ast-----|--parent-index--|---additional-info---|
+|    4    |            64               |       4        |          56         |
+```
+
+The parent index constructs the array into a tree, and we use a trimmed `cAST` and its derivations
+to store only the structure, the additional information (e.g. function name), and every child of an AST node.
+
+`${function_name}` is a data cache corresponding to a function that is the latest compiled. 
+
+Note that a function has a signature and a realization. The first line is the hash of the whole function, 
+while the second is the hash of the function body. It is designed so that we can compare two functions by hash and 
+do function renaming, which means that, when the user renames a function but does not modify its content, we 
+shall use the cache.
 
 ## Usage
 

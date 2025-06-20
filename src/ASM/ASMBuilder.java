@@ -66,7 +66,7 @@ public class ASMBuilder implements IRVisitor {
     public void visit(IRFuncDef node) {
         curFunc = new ASMFuncDef(node.name.substring(1));
         curIRFuncDef = node;
-        curFunc.hash = node.hash;
+        curFunc.fd = node.fd;
         asmProg.funcDefs.add(curFunc);
 
         ASMBlock in = new ASMBlock(node.name.substring(1));

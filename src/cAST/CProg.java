@@ -27,19 +27,21 @@ public class CProg extends BaseCASTNode {
 
     public void collectFuncHash() {
         for (CDef def : defs) {
-            if (def instanceof FuncCDef funcCDef) {
-                defsMap.put(funcCDef.funcName, funcCDef);
-                hashMap.put(funcCDef.hash, funcCDef);
-            } else if (def instanceof ClassCDef classCDef) {
-                defsMap.put(classCDef.className, classCDef);
-                hashMap.put(classCDef.hash, classCDef);
-                for (FuncCDef funcCDef : classCDef.classFunc) {
-                    defsMap.put(classCDef.className + ".." + funcCDef.funcName, funcCDef);
-                    hashMap.put(funcCDef.hash, funcCDef);
+            switch (def) {
+                case FuncCDef funcCDef -> {
+                    defsMap.put(funcCDef.funcName, funcCDef);
+                    hashMap.put(funcCDef.funcBody.hash, funcCDef);
                 }
-            } else if (def instanceof VarCDef) {
-            } else {
-                throw new RuntimeException("Cache definition type mismatch!");
+                case ClassCDef classCDef -> {
+                    defsMap.put(classCDef.className, classCDef);
+                    for (FuncCDef funcCDef : classCDef.classFunc) {
+                        defsMap.put(classCDef.className + ".." + funcCDef.funcName, funcCDef);
+                        hashMap.put(funcCDef.funcBody.hash, funcCDef);
+                    }
+                }
+                case VarCDef varCDef -> {
+                }
+                case null, default -> throw new RuntimeException("Cache definition type mismatch!");
             }
         }
     }

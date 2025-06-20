@@ -138,12 +138,12 @@ public class IRBuilder implements __ASTVisitor {
 
     @Override
     public void visit(FuncDef node) {
-        if(!node.isCompile()) return;
+        if (!node.isCompile()) return;
         if (curScope.isGlobal()) {
             IRFuncDef f = new IRFuncDef("@" + node.funcName);
             f.className = null;
             f.funcName = node.funcName;
-            f.hash = node.hash;
+            f.fd = node;
             irProg.addFuncDef(f);
             f.retType = new IRType(node.retType);
             curBlock = new IRBlock("entry");
@@ -185,7 +185,7 @@ public class IRBuilder implements __ASTVisitor {
             IRFuncDef f = new IRFuncDef("@" + curClassDef + ".." + node.funcName);
             f.className = curClassDef;
             f.funcName = node.funcName;
-            f.hash = node.hash;
+            f.fd = node;
             irProg.addFuncDef(f);
             f.retType = new IRType(node.retType);
             curBlock = new IRBlock("entry");
@@ -245,7 +245,7 @@ public class IRBuilder implements __ASTVisitor {
         curFunc = new IRFuncDef("@" + node.className + ".." + node.className);
         curFunc.paramNames.add("%this.val");
         curFunc.paramTypes.add(typePtr);
-        curFunc.hash = node.constructor.hash;
+//        curFunc.fd = node.constructor;
         Register originThisReg = Register.newReg("%this");
         Register thisReg = Register.newReg("%this..tmp");
         curFunc.addAlloca(new Alloca(typePtr, originThisReg));
@@ -303,7 +303,7 @@ public class IRBuilder implements __ASTVisitor {
                         IRFuncDef init = new IRFuncDef("@.init.global." + entry.getKey());
                         curBlock = new IRBlock("entry");
                         curFunc = init;
-                        curFunc.hash = node.hash;
+//                        curFunc.fd=node;
                         entry.getValue().accept(this);
                         curBlock.addInst(new Store(new IRType(node.type), entry.getValue().entity, Register.newReg(g.name)));
                         curBlock.addInst(new Ret());
@@ -343,8 +343,8 @@ public class IRBuilder implements __ASTVisitor {
     }
 
     @Override
-    public void visit(GvarDec node){
-        for(String s: node.varName){
+    public void visit(GvarDec node) {
+        for (String s : node.varName) {
             IRGVarDec i = new IRGVarDec();
             i.irType = new IRType(node.type);
             i.name = "@" + s;
@@ -355,7 +355,7 @@ public class IRBuilder implements __ASTVisitor {
     @Override
     public void visit(GfuncDec node) {
         IRFuncDec f = new IRFuncDec("@" + node.funcName);
-        node.funcParams.forEach(d->f.paramTypes.add(new IRType(d)));
+        node.funcParams.forEach(d -> f.paramTypes.add(new IRType(d)));
         f.retType = new IRType(node.retType);
         irProg.addDec(f);
     }
@@ -371,7 +371,7 @@ public class IRBuilder implements __ASTVisitor {
     @Override
     public void visit(MethodDec node) {
         IRFuncDec f = new IRFuncDec("@" + node.className + ".." + node.funcName);
-        node.funcParams.forEach(d->f.paramTypes.add(new IRType(d)));
+        node.funcParams.forEach(d -> f.paramTypes.add(new IRType(d)));
         f.retType = new IRType(node.retType);
         irProg.addDec(f);
     }

@@ -26,21 +26,22 @@ import java.io.*;
 import java.util.ArrayList;
 
 public class astCacheManager implements __ASTVisitor {
+    File file;
     public ArrayList<cacheBlock> list = new ArrayList<>();
     String cacheDir = "/home/limike/.mcache/";
     public int curPos = -1;
 
     public astCacheManager(File f, Prog p) throws IOException {
         p.accept(this);
-        cacheDir = cacheDir + f.getName() + "/";
-        File file = new File(cacheDir);
-        if (!file.exists() || !file.isDirectory()) {
-            file.mkdir();
-        }
+//        cacheDir = cacheDir + f.getName() + "/";
+        file = f;
+//        if (!file.exists() || !file.isDirectory()) {
+//            file.mkdir();
+//        }
     }
 
     public void writeCache() throws IOException {
-        FileOutputStream c = new FileOutputStream(cacheDir + "ast.cache");
+        FileOutputStream c = new FileOutputStream(cacheDir + file.getName() + ".ast.cache");
         DataOutputStream dos = new DataOutputStream(c);
         writeCache(dos);
         dos.close();
@@ -167,7 +168,7 @@ public class astCacheManager implements __ASTVisitor {
         list.add(c);
         node.condition.accept(this);
         node.trueStmt.accept(this);
-        node.falseStmt.accept(this);
+        if (node.falseStmt != null) node.falseStmt.accept(this);
         curPos = tmp;
     }
 

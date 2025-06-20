@@ -1,5 +1,7 @@
 package src.IR.IRDef;
 
+import src.AST.Def.Def;
+import src.AST.Def.FuncDef;
 import src.IR.IRInst.IRInst;
 import src.IR.IRVisitor;
 import src.utils.IRType.IRType;
@@ -22,7 +24,7 @@ public class IRFuncDef extends IRDef {
     public boolean hasCall = false;
     public String className = null; // = null if not a method
     public String funcName;
-    public String hash;
+    public Def fd;
 
     public IRFuncDef(String name) {
         retType = new IRType();

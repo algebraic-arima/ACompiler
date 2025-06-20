@@ -78,9 +78,8 @@ public class astCacheReader {
     }
 
     public astCacheReader(File f) {
-        cacheDir = cacheDir + f.getName() + "/";
         try {
-            FileInputStream i = new FileInputStream(cacheDir + "ast.cache");
+            FileInputStream i = new FileInputStream(cacheDir + f.getName() + ".ast.cache");
             DataInputStream dis = new DataInputStream(i);
             list = readAllBlocks(dis);
             CAST();
